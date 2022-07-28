@@ -17,7 +17,7 @@ app.use(express.static("public"));
 // API Routes ---------------------------------------------
 // GET /api/notes
 app.get("/api/notes", (req, res) => {
-  fs.readFile(path.join("./db/db.json"), "utf8", (err, data) => {
+  fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
     if (err) {
       console.error(err);
     } else {
@@ -29,17 +29,36 @@ app.get("/api/notes", (req, res) => {
 
 // POST /api/notes
 app.post("/api/notes", (req, res) => {
-  fs.writeFile(
-    path.join("./db/db.json", JSON.stringify(notes, null, 2), (err, data) => {
+  
+  const { title, text } = req.body;
+  if ( title && text ) {
+    const new_note = {
+      title,
+      text,
+      noteID: uuid(),
+    };
+  
+    fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
       if (err) {
         console.error(err);
       } else {
-        const new_note = req.body;
+        const notes = JSON.parse(data);
+        
+        // push new note
+        notes.push(new_note);
+  
+        //update file
+  fs.writeFile("./db/db.json", JSON.stringify(notes, null, 2), (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
         res.json(new_note);
       }
-    })
-  );
+    });
+  }
 });
+
+  }});
 
 // DELETE /api/notes/:id
 // should receive a query parameter that contains the id of a note to delete. To delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
