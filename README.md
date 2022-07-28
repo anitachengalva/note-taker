@@ -50,8 +50,8 @@ Users may view previous notes in the left-side column by clicking on them. Users
 > [Express.js](https://expressjs.com/)
 
 > [Node.js](https://nodejs.org/en/)
-
 > - [Express.js npm](https://www.npmjs.com/package/express)
+> - [uuid npm](https://www.npmjs.com/package/uuid)
 
 > [Heroku](https://www.heroku.com/what)
 
