@@ -73,11 +73,7 @@ app.delete("/api/notes/:id", (req, res) => {
       let notes = JSON.parse(data);
 
       // delete note by ID
-      for (let i = 0; i < notes.length; i++) {
-        if (noteID === notes[i].noteID) {
-          notes.splice(i, 1);
-        }
-      }
+      const modified_notes = notes.filter((note)=>note.id!==noteID);
 
       //update file
       fs.writeFile(
