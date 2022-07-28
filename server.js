@@ -17,7 +17,7 @@ app.use(express.static("public"));
 // API Routes ---------------------------------------------
 // GET /api/notes
 app.get("/api/notes", (req, res) => {
-  fs.readFile(path.join("./db/db.json"), (err, data) => {
+  fs.readFile(path.join("./db/db.json"), "utf8", (err, data) => {
     if (err) {
       console.error(err);
     } else {
@@ -25,7 +25,10 @@ app.get("/api/notes", (req, res) => {
       res.json(notes);
     }
   });
-  // POST /api/notes
+});
+
+// POST /api/notes
+app.post("/api/notes", (req, res) => {
   fs.writeFile(
     path.join("./db/db.json", JSON.stringify(notes, null, 2), (err, data) => {
       if (err) {
