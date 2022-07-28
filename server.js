@@ -70,9 +70,14 @@ app.delete("/api/notes/:id", (req, res) => {
     if (err) {
       console.error(err);
     } else {
-      const notes = JSON.parse(data);
+      let notes = JSON.parse(data);
 
       // delete note by ID
+      for (let i = 0; i < notesArr.length; i++) {
+        if (id === notes[i].noteID) {
+          notes.splice(i, 1);
+        }
+      }
 
       //update file
       fs.writeFile(
