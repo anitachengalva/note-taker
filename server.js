@@ -2,7 +2,7 @@ const path = require("path");
 const express = require("express");
 const fs = require("fs");
 const uuid = require("uuid");
-const notes = require('./db/db.json');
+const notes = require("./db/db.json");
 
 const PORT = process.env.PORT || 3001;
 
@@ -14,30 +14,29 @@ app.use(express.static("public"));
 
 // ROUTES -------------------------------------------------
 
-// API Routes ---------------------------------------------
-// GET ALL /api/notes
+// GET routes
+app.get("/notes", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/notes.html"));
+});
+
+app.get("/", (req, res) =>
+  res.sendFile(path.join(__dirname, "./public/index.html"))
+);
+
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
+});
+
 app.get("/api/notes", (req, res) => {
-  fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
-    if (err) {
-      console.error(err);
-    } else {
-      const notes = JSON.parse(data);
-      res.json(notes);
-    }
-  });
+  res.sendFile(path.join(__dirname, "./db/db.json"));
 });
 
-// GET SPECIFIC NOTE /api/notes
-app.get("/api/notes/:id", (req,res) =>{
-  const selected_note = req.params.id;
-  for (let i = 0; i < notes.length; i++) {
-    if (selected_note === notes[i].id) {
-      return res.json(notes[i]);
-    }
-  }
+app.get("/api/notes/:id", (req, res) => {
+  const index = req.params.id;
+  res.json(notes[index]);
 });
 
-// POST /api/notes
+// POST routes
 app.post("/api/notes", (req, res) => {
   const { title, text } = req.body;
   if (title && text) {
@@ -47,25 +46,25 @@ app.post("/api/notes", (req, res) => {
       noteID: uuid.v4(),
     };
 
-    fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
+    fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, notes) => {
       if (err) {
         console.error(err);
       } else {
-        const notes = JSON.parse(data);
+        const parsed_notes = JSON.parse(notes);
 
         // push new note
-        notes.push(new_note);
+        parsed_notes.push(new_note);
 
         //update file
         fs.writeFile(
           "./db/db.json",
-          JSON.stringify(notes, null, 2),
-          (err, data) => {
-            if (err) {
-              console.error(err);
-            } else {
+          JSON.stringify(parsed_notes, null, 4),
+          "utf8",
+          (err, notes) => {
+            (err) => {
+              if (err) return console.log(err);
               res.json(new_note);
-            }
+            };
           }
         );
       }
@@ -75,42 +74,30 @@ app.post("/api/notes", (req, res) => {
 
 // DELETE /api/notes/:id
 app.delete("/api/notes/:id", (req, res) => {
-  const noteID = req.params.id;
-  fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
-    if (err) {
-      console.error(err);
-    } else {
-      let notes = JSON.parse(data);
+  const id = req.params.id;
+  console.log(id);
+  fs.readFile("./db/db.json", (err, notes) => {
+    if (err) throw err;
+    let parsed_notes = JSON.parse(notes);
+    console.log(parsed_notes[0].id);
 
-      // delete note by ID
-      const modified_notes = notes.filter((note)=>note.id!==noteID);
-
-      //update file
-      fs.writeFile(
-        "./db/db.json",
-        JSON.stringify(notes, null, 2),
-        (err, data) => {
-          if (err) {
-            console.error(err);
-          } else {
-            res.json(`Note ${noteID} sucessfully deleted!`);
-          }
-        }
-      );
+    for (let i = 0; i < parsed_notes.length; i++) {
+      if (id === parsed_notes[i].id) {
+        parsed_notes.splice(i, 1);
+      }
     }
+
+    fs.writeFile(
+      "./db/db.json",
+      JSON.stringify(parsed_notes, null, 2),
+      "utf8",
+      (err) => {
+        if (err) return console.log(err);
+        res.json(`Note ${id} has been sucessfully deleted!`);
+      }
+    );
   });
 });
-
-// HTML Routes ---------------------------------------------
-// GET /notes
-app.get("/notes", (req, res) =>
-  res.sendFile(path.join(__dirname, "/public/notes.html"))
-);
-
-// GET
-app.get("/", (req, res) =>
-  res.sendFile(path.join(__dirname, "/public/index.html"))
-);
 
 app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${PORT} 🚀`)
