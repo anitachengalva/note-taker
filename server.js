@@ -1,5 +1,4 @@
 const path = require("path");
-const parse = require("path");
 const express = require("express");
 const fs = require("fs");
 const uuid = require("uuid");
@@ -30,8 +29,8 @@ app.get("*", function (req, res) {
 
 app.get("/api/notes", (req, res) => {
   fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
-    const parsed_notes = JSON.parse(data);
-    res.json(parsed_notes);
+    const notes = JSON.parse(data);
+    res.json(notes);
   })
 });
 
@@ -47,14 +46,14 @@ app.post("/api/notes", (req, res) => {
     const new_note = {
       title,
       text,
-      noteID: uuid.v4(),
+      id: uuid.v4(),
     };
 
-    fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, notes) => {
+    fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
       if (err) {
         console.error(err);
       } else {
-        const parsed_notes = JSON.parse(notes);
+        const parsed_notes = JSON.parse(data);
 
         // push new note
         parsed_notes.push(new_note);
@@ -64,7 +63,7 @@ app.post("/api/notes", (req, res) => {
           "./db/db.json",
           JSON.stringify(parsed_notes, null, 4),
           "utf8",
-          (err, notes) => {
+          (err, data) => {
             (err) => {
               if (err) return console.log(err);
               res.json(new_note);
