@@ -34,7 +34,7 @@ app.post("/api/notes", (req, res) => {
     const new_note = {
       title,
       text,
-      noteID: uuid(),
+      noteID: uuid.v4(),
     };
 
     fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
@@ -73,8 +73,8 @@ app.delete("/api/notes/:id", (req, res) => {
       let notes = JSON.parse(data);
 
       // delete note by ID
-      for (let i = 0; i < notesArr.length; i++) {
-        if (id === notes[i].noteID) {
+      for (let i = 0; i < notes.length; i++) {
+        if (noteID === notes[i].noteID) {
           notes.splice(i, 1);
         }
       }
