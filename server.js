@@ -15,7 +15,7 @@ app.use(express.static("public"));
 // ROUTES -------------------------------------------------
 
 // API Routes ---------------------------------------------
-// GET /api/notes
+// GET ALL /api/notes
 app.get("/api/notes", (req, res) => {
   fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
     if (err) {
@@ -25,6 +25,16 @@ app.get("/api/notes", (req, res) => {
       res.json(notes);
     }
   });
+});
+
+// GET SPECIFIC NOTE /api/notes
+app.get("/api/notes/:id", (req,res) =>{
+  const selected_note = req.params.id;
+  for (let i = 0; i < notes.length; i++) {
+    if (selected_note === notes[i].id) {
+      return res.json(notes[i]);
+    }
+  }
 });
 
 // POST /api/notes
