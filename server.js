@@ -27,6 +27,30 @@ app.get("/api/notes", (req, res) => {
   // })
 });
 
+// POST request to add a note
+app.post("/api/notes", (req, res) => {
+  console.info(`${req.method} request received to add a note`);
+  const { title, text } = req.body;
+  if (title && text) {
+    const newNote = {
+      title,
+      text,
+      note_id: uuid(),
+    };
+
+    const noteString = JSON.stringify(newNote);
+
+    fs.writeFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        const response ={
+          status: "success",
+          body: newNote,
+        };
+      }});
+    }});
+
 app.get("/notes", (req, res) => {
   res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
@@ -38,42 +62,6 @@ app.get("*", function (req, res) {
 app.get("/api/notes/:id", (req, res) => {
   const index = req.params.id;
   res.json(notes[index]);
-});
-
-// POST request to add a note
-app.post("/api/notes", (req, res) => {
-  const { title, text } = req.body;
-  if (title && text) {
-    const new_note = {
-      title,
-      text,
-      id: uuid.v4(),
-    };
-
-    fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
-      if (err) {
-        console.error(err);
-      } else {
-        const parsed_notes = JSON.parse(data);
-
-        // push new note
-        parsed_notes.push(new_note);
-
-        //update file
-        fs.writeFile(
-          "./db/db.json",
-          JSON.stringify(parsed_notes, null, 4),
-          "utf8",
-          (err, data) => {
-            (err) => {
-              if (err) return console.log(err);
-              res.json(new_note);
-            };
-          }
-        );
-      }
-    });
-  }
 });
 
 // DELETE /api/notes/:id
