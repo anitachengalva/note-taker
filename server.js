@@ -20,11 +20,11 @@ app.get("/", (req, res) =>
 // GET request for notes
 app.get("/api/notes", (req, res) => {
   res.json(`${req.method} request recieved to get notes`);
-  console.info(`${req.method} request recieved to get reviews`);
-  // fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
-  //   const notes = JSON.parse(data);
-  //   res.json(notes);
-  // })
+  console.info(`${req.method} request recieved to get notes`);
+  fs.readFile(path.join(__dirname, "../db/db.json"), (err, data) => {
+    const notes = JSON.parse(data);
+    res.json(notes);
+  });
 });
 
 // POST request to add a note
@@ -40,16 +40,22 @@ app.post("/api/notes", (req, res) => {
 
     const noteString = JSON.stringify(newNote);
 
-    fs.writeFile(path.join(__dirname, "./db/db.json"), (err, data) => {
-      if (err) {
-        console.error(err);
-      } else {
-        const response ={
-          status: "success",
-          body: newNote,
-        };
-      }});
-    }});
+    fs.writeFile(
+      path.join(__dirname, "./db/db.json"),
+      noteString,
+      (err, results) => {
+        if (err) {
+          console.error(err);
+        } else {
+          const response = {
+            status: "success",
+            body: newNote,
+          };
+        }
+      }
+    );
+  }
+});
 
 app.get("/notes", (req, res) => {
   res.sendFile(path.join(__dirname, "./public/notes.html"));
