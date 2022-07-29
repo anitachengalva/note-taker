@@ -19,7 +19,6 @@ app.get("/", (req, res) =>
 
 // GET request for notes
 app.get("/api/notes", (req, res) => {
-  res.json(`${req.method} request recieved to get notes`);
   console.info(`${req.method} request recieved to get notes`);
   fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
     const notes = JSON.parse(data);
