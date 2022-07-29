@@ -40,7 +40,7 @@ app.post("/api/notes", (req, res) => {
 
     const noteString = JSON.stringify(newNote);
 
-    fs.writeFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
+    fs.writeFile(path.join(__dirname, "./db/db.json"), (err, data) => {
       if (err) {
         console.error(err);
       } else {
@@ -82,7 +82,6 @@ app.delete("/api/notes/:id", (req, res) => {
     fs.writeFile(
       "./db/db.json",
       JSON.stringify(parsed_notes, null, 2),
-      "utf8",
       (err) => {
         if (err) return console.log(err);
         res.json(`Note ${id} has been sucessfully deleted!`);
