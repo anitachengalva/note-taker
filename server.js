@@ -21,7 +21,7 @@ app.get("/", (req, res) =>
 app.get("/api/notes", (req, res) => {
   res.json(`${req.method} request recieved to get notes`);
   console.info(`${req.method} request recieved to get notes`);
-  fs.readFile(path.join(__dirname, "../db/db.json"), (err, data) => {
+  fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
     const notes = JSON.parse(data);
     res.json(notes);
   });
@@ -38,22 +38,30 @@ app.post("/api/notes", (req, res) => {
       note_id: uuid(),
     };
 
-    const noteString = JSON.stringify(newNote);
+    fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        const parsedNotes = JSON.parse(data);
 
-    fs.writeFile(
-      path.join(__dirname, "./db/db.json"),
-      noteString,
-      (err, results) => {
-        if (err) {
-          console.error(err);
-        } else {
-          const response = {
-            status: "success",
-            body: newNote,
-          };
-        }
+        parsedNotes.push(newNote);
+
+        fs.writeFile(
+          "./db/db.json",
+          JSON.stringify(parsedNotes, null, 4),
+          (err, results) => {
+            if (err) {
+              console.error(err);
+            } else {
+              const response = {
+                status: "success",
+                body: newNote,
+              };
+            }
+          }
+        );
       }
-    );
+    });
   }
 });
 
