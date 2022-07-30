@@ -40,30 +40,10 @@ app.post("/api/notes", (req, res) => {
       note_id: uuid(),
     };
 
-    fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
-      if (err) {
-        console.error(err);
-      } else {
-        const parsedNotes = JSON.parse(data);
-
-        parsedNotes.push(newNote);
-
-        fs.writeFile(
-          "./db/db.json",
-          JSON.stringify(parsedNotes, null, 4),
-          (err, results) => {
-            if (err) {
-              console.error(err);
-            } else {
-              const response = {
-                status: "success",
-                body: newNote,
-              };
-            }
-          }
-        );
-      }
-    });
+    readAndAppend(newNote, './db/db.json');
+    res.json(`New Note added successfully 🚀`);
+  } else {
+    res.error('Error in adding Note');
   }
 });
 
