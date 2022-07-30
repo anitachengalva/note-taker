@@ -1,7 +1,13 @@
 const path = require("path");
 const express = require("express");
 const fs = require("fs");
+
 const uuid = require("./helpers/uuid");
+const {
+  readFromFile,
+  readAndAppend,
+  writeToFile,
+} = require("./helpers/fsUtils");
 
 const PORT = process.env.PORT || 3001;
 
@@ -20,10 +26,7 @@ app.get("/", (req, res) =>
 // GET request for notes
 app.get("/api/notes", (req, res) => {
   console.info(`${req.method} request recieved to get notes`);
-  fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
-    const notes = JSON.parse(data);
-    res.json(notes);
-  });
+  readFromFile('./db/db.json').then((data) => res.json(JSON.parse(data)));
 });
 
 // POST request to add a note
