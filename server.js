@@ -63,29 +63,12 @@ app.get("/api/notes/:id", (req, res) => {
 // DELETE /api/notes/:id
 app.delete("/api/notes/:id", (req, res) => {
   const noteId = req.params.id;
-  fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
-    if (err) {
-      console.error(err);
-    } else {
-      const parsedNotes = JSON.parse(data);
-      const updatedNotes = parsedNotes.filter((note) => note.id !== noteId);
-
-      fs.writeFile(
-        "./db/db.json",
-        JSON.stringify(updatedNotes, null, 4),
-        (err, results) => {
-          if (err) {
-            console.error(err);
-          } else {
-            const response = {
-              status: "success",
-              body: updatedNotes,
-            };
-            res.json(`Item ${noteId} has been deleted 🗑️`);
-          }
-        }
-      );
-    }
+  readFromFile('./db/db.json')
+  .then((data) => JSON.parse(data))
+  .then((json) => {
+    const result = json.filter((tip) => notes.id !== noteId);
+    writeToFile('./db/db.json', result);
+    res.json(`Item ${noteId} has been deleted 🗑️`);
   });
 });
 
