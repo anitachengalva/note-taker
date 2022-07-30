@@ -79,28 +79,31 @@ app.get("/api/notes/:id", (req, res) => {
 
 // DELETE /api/notes/:id
 app.delete("/api/notes/:id", (req, res) => {
-  const id = req.params.id;
-  console.log(id);
-  fs.readFile("./db/db.json", (err, notes) => {
-    if (err) throw err;
-    let parsed_notes = JSON.parse(notes);
-    console.log(parsed_notes[0].id);
+  const noteId = req.params.id;
+  console.log(noteId);
+  fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
+    const notes = JSON.parse(data);
+    const parsedNotes = JSON.parse(data);
 
-    for (let i = 0; i < parsed_notes.length; i++) {
-      if (id === parsed_notes[i].id) {
-        parsed_notes.splice(i, 1);
-      }
-    }
+    const updatedNote = json.filter((notes) => notes.id !== noteId);
+
+    parsedNotes.push(updatedNote);
 
     fs.writeFile(
       "./db/db.json",
-      JSON.stringify(parsed_notes, null, 2),
-      (err) => {
-        if (err) return console.log(err);
-        res.json(`Note ${id} has been sucessfully deleted!`);
+      JSON.stringify(parsedNotes, null, 4),
+      (err, results) => {
+        if (err) {
+          console.error(err);
+        } else {
+          const response = {
+            status: "success",
+            body: updatedNote,
+          };
+        }
       }
     );
-  });
+  })
 });
 
 app.listen(PORT, () =>
