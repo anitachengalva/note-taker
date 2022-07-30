@@ -56,6 +56,7 @@ app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
+// GET request for notes by ID
 app.get("/api/notes/:id", (req, res) => {
   const noteId = req.params.id;
   readFromFile('./db/db.json')
