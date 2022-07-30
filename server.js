@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const fs = require("fs");
+const notes = require("./db/db.json")
 
 const uuid = require("./helpers/uuid");
 const {
@@ -56,8 +57,15 @@ app.get("*", function (req, res) {
 });
 
 app.get("/api/notes/:id", (req, res) => {
-  const index = req.params.id;
-  res.json(notes[index]);
+  const noteId = req.params.id;
+  readFromFile('./db/db.json')
+    .then((data) => JSON.parse(data))
+    .then((json) => {
+      const result = json.filter((notes) => notes.id === noteId);
+      return result.length > 0
+        ? res.json(result)
+        : res.json('No Notes with that ID');
+    });
 });
 
 // DELETE /api/notes/:id
@@ -66,7 +74,7 @@ app.delete("/api/notes/:id", (req, res) => {
   readFromFile('./db/db.json')
   .then((data) => JSON.parse(data))
   .then((json) => {
-    const result = json.filter((tip) => notes.id !== noteId);
+    const result = json.filter((notes) => notes.id !== noteId);
     writeToFile('./db/db.json', result);
     res.json(`Item ${noteId} has been deleted 🗑️`);
   });
