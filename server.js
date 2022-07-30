@@ -80,7 +80,7 @@ app.get("/api/notes/:id", (req, res) => {
 // DELETE /api/notes/:id
 app.delete("/api/notes/:id", (req, res) => {
   const noteId = req.params.id;
-  fs.readFile(path.join(__dirname, "../db/db.json"), "utf8", (err, data) => {
+  fs.readFile(path.join(__dirname, "./db/db.json"), "utf8", (err, data) => {
     if (err) {
       console.error(err);
     } else {
