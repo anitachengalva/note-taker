@@ -58,9 +58,11 @@ Users may view previous notes in the left-side column by clicking on them. Users
 
 ## Screenshots and Walkthrough
 
-![Alt-txt-placeholder](path-placeholder)
-*caption*
+![Test-Note](./public/assets/img/11-testnote.jpg)
+*Creating a new note*
 </br>
+Hitting the "Save" icon in the top right will save your newly made note into your list on the left-hand side.
+
 
 ## Contributors
 
