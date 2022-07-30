@@ -80,30 +80,30 @@ app.get("/api/notes/:id", (req, res) => {
 // DELETE /api/notes/:id
 app.delete("/api/notes/:id", (req, res) => {
   const noteId = req.params.id;
-  console.log(noteId);
-  fs.readFile(path.join(__dirname, "./db/db.json"), (err, data) => {
-    const notes = JSON.parse(data);
-    const parsedNotes = JSON.parse(data);
+  fs.readFile(path.join(__dirname, "../db/db.json"), "utf8", (err, data) => {
+    if (err) {
+      console.error(err);
+    } else {
+      const parsedNotes = JSON.parse(data);
+      const updatedNotes = parsedNotes.filter((note) => note.id !== noteId);
 
-    const updatedNote = json.filter((notes) => notes.id !== noteId);
-
-    parsedNotes.push(updatedNote);
-
-    fs.writeFile(
-      "./db/db.json",
-      JSON.stringify(parsedNotes, null, 4),
-      (err, results) => {
-        if (err) {
-          console.error(err);
-        } else {
-          const response = {
-            status: "success",
-            body: updatedNote,
-          };
+      fs.writeFile(
+        "./db/db.json",
+        JSON.stringify(updatedNotes, null, 4),
+        (err, results) => {
+          if (err) {
+            console.error(err);
+          } else {
+            const response = {
+              status: "success",
+              body: updatedNotes,
+            };
+            res.json(`Item ${noteId} has been deleted 🗑️`);
+          }
         }
-      }
-    );
-  })
+      );
+    }
+  });
 });
 
 app.listen(PORT, () =>
